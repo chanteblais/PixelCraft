@@ -280,8 +280,8 @@ path {
       <li onclick="newProject()">New</li>
       <li onclick="board.save()">Save image</li>
       <li onclick="board.renderGIF()">Save GIF</li>
-      <li onclick="install()">Install PWA</li>
-      <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li>
+      <!-- <li onclick="install()">Install PWA</li> -->
+      <!-- <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li> -->
     </ul>
     <div id="popup">
       <h3>Select the Dimensions Of the grid</h3>
@@ -466,7 +466,7 @@ class Canvas {
   }
   getColor(x, y){
     var p = document.querySelector("#canvas").getContext('2d').getImageData(Math.floor(x * (window.board.w / window.board.width)), Math.floor(y * (window.board.h / window.board.height)), Math.floor(window.board.w / window.board.width), Math.floor(window.board.h / window.board.height)).data;
-    return "0x" + ("000000" + this.rgbToHex(p[0], p[1], p[2])).slice(-6);
+    return "#" + ("000000" + this.rgbToHex(p[0], p[1], p[2])).slice(-6);
   }
   publish(){
     var payload = "";
@@ -475,7 +475,7 @@ class Canvas {
         payload += this.getColor(j,i)+",";
       }
     }
-    fetch('http://localhost:3000/publish', {
+    fetch('http://10.1.1.1:3000/publish', {
       headers: { "Content-Type": "text/plain" },
       method: 'POST',
       body: payload
@@ -664,7 +664,7 @@ window.onload = function () {
   let canvasData = localStorage.getItem('pc-canvas-data');
   if(canvasData){
     data = JSON.parse(canvasData);
-    console.log(data);
+    console.log("Existing data", data);
     window.colors = data.colors;
     if(window.board == undefined){
       window.board = new Canvas(data.width, data.height);
@@ -710,7 +710,9 @@ window.onload = function () {
     });
   }
   else {
+    console.log("Creating new project");
     newProject();
+    createProject(10,10);
   }
   document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
 
@@ -720,6 +722,10 @@ window.onload = function () {
 document.querySelector("#close").onclick = function () {
   var width = +document.querySelector("#width").value;
   var height = +document.querySelector("#height").value;
+  createProject(width, height);
+}
+
+function createProject(width, height) {
   if(window.board == undefined){
     window.board = new Canvas(width, height);
   }
@@ -741,7 +747,9 @@ document.querySelector("#close").onclick = function () {
   window.board.frames = [];
 
   window.board.setcolor([0, 0, 0, 255]);
-  window.dim.close();
+  if (window.dim){
+    window.dim.close();
+  }
   window.gif = new GIF({
     workers: 2,
     quality: 10,
@@ -764,7 +772,7 @@ document.querySelector(".menubtn").onclick = function () {
 function newProject(){
   document.querySelector(".menu").style.display = "none";
   localStorage.removeItem('pc-canvas-data');
-  window.dim = new Popup("#popup");
+  //window.dim = new Popup("#popup");
   window.colors = [
     [0, 0, 0, 255],
     [127, 127, 127, 255],
