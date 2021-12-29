@@ -393,7 +393,6 @@ class Canvas {
     this.canvas.addEventListener("mousedown", e => {
       this.previous_point = new Point(undefined,undefined)
       this.active = true;
-      console.log("Active")
       this.publish();
     });
     this.canvas.addEventListener("mouseup", e => {
@@ -454,7 +453,7 @@ class Canvas {
   erase(x, y){
     var temp = this.color;
     var tga = this.ctx.globalAlpha;
-    this.setcolor([255, 255, 255, 255]);
+    this.setcolor([0, 0, 0, 255]);
     this.draw(x, y);
     this.setcolor(temp);
     this.ctx.globalAlpha = tga;
@@ -475,7 +474,7 @@ class Canvas {
         payload += this.getColor(j,i)+",";
       }
     }
-    fetch('http://10.1.1.1:3000/publish', {
+    fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "text/plain" },
       method: 'POST',
       body: payload
@@ -505,9 +504,9 @@ class Canvas {
   }
 
   clear() {
-    this.ctx.fillStyle = "white";
+    this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.w, this.h);
-    this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
     this.setcolor(this.color);
     this.setmode(Tool.pen);
   }
@@ -664,7 +663,6 @@ window.onload = function () {
   let canvasData = localStorage.getItem('pc-canvas-data');
   if(canvasData){
     data = JSON.parse(canvasData);
-    console.log("Existing data", data);
     window.colors = data.colors;
     if(window.board == undefined){
       window.board = new Canvas(data.width, data.height);
@@ -712,7 +710,6 @@ window.onload = function () {
   else {
     console.log("Creating new project");
     newProject();
-    createProject(10,10);
   }
   document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
 
@@ -738,7 +735,7 @@ function createProject(width, height) {
   window.board.w = +window.board.canvas.width;
   window.board.h = +window.board.canvas.height;
   window.board.ctx = window.board.canvas.getContext("2d");
-  window.board.ctx.fillStyle = "white";
+  window.board.ctx.fillStyle = "black";
   window.board.ctx.globalAlpha = 1;
   window.board.ctx.fillRect(0, 0, window.board.w, window.board.h);
   window.board.data = [...Array(window.board.width)].map(e => Array(window.board.height).fill([255, 255, 255, 255]));
@@ -746,7 +743,7 @@ function createProject(width, height) {
   window.board.redo_arr = [];
   window.board.frames = [];
 
-  window.board.setcolor([0, 0, 0, 255]);
+  window.board.setcolor([255, 255, 255, 255]);
   if (window.dim){
     window.dim.close();
   }
@@ -795,6 +792,7 @@ function newProject(){
     [112, 146, 190, 255],
     [200, 191, 231, 255]
   ];
+  createProject(10,10);
 }
 function filler(x, y, cc) {
   if (x >= 0 && x < board.width && y >= 0 && y < board.height) {
@@ -826,7 +824,7 @@ if ('serviceWorker' in navigator) {
     'sw.js',
     scope
   ).then(function(serviceWorker) {
-    console.log('successful');
+    console.log('Welcome to Glåüm Matrix!');
   }).catch(function(error) {
     alert(error);
   });
