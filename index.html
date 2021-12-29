@@ -278,8 +278,8 @@ path {
     <div class="menubtn">Glåüm</div>
     <ul class="menu">
       <li onclick="newProject()">New</li>
-      <li onclick="board.save()">Save image</li>
-      <li onclick="board.renderGIF()">Save GIF</li>
+      <li onclick="board.save()">Send Image</li>
+      <li onclick="board.renderGIF()">Play GIF</li>
       <!-- <li onclick="install()">Install PWA</li> -->
       <!-- <li><a href="https://github.com/rgab1508/PixelCraft" target="_blank"><i class="fab fa-github"></i>Github</a></li> -->
     </ul>
@@ -345,6 +345,7 @@ class Canvas {
     this.steps = [];
     this.redo_arr = [];
     this.frames = [];
+    this.gifFrames = [];
     
     this.previous_point = new Point(undefined,undefined)
     // Moved on-click to on-mouse-up to tell the difference
@@ -494,6 +495,7 @@ class Canvas {
     })
   }
   save() {
+    console.log("Saving")
     this.canvas.toBlob(function (blob) {
       var url = URL.createObjectURL(blob);
       var link = document.createElement('a');
@@ -515,6 +517,14 @@ class Canvas {
     var img = new Image();
     img.src = data || this.canvas.toDataURL();
     this.frames.push([img,this.data.map(inner => inner.slice())]);
+
+      var frame = [];
+      for (let i = 0 ; i < this.height ; i++ ){
+        for (let j = 0 ; j < this.width ; j++ ){
+          frame.push(this.getColor(j,i))
+        }
+      }
+      this.gifFrames.push(frame)
   }
 
   deleteFrame(f) {
@@ -545,7 +555,17 @@ class Canvas {
       		delay: 100
     	});
   	});
-  	gif.render();
+  	// gif.render();
+
+    var payload = new Array()
+    this.gifFrames.forEach(frame => {
+      payload.push(frame)
+    });
+    fetch('http://localhost:3000/publish', {
+      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      body: JSON.stringify({payload})
+    })
   }
 
   undo() {
