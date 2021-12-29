@@ -469,16 +469,16 @@ class Canvas {
     return "#" + ("000000" + this.rgbToHex(p[0], p[1], p[2])).slice(-6);
   }
   publish(){
-    var payload = "";
+    var payload = [];
     for (let i = 0 ; i < this.height ; i++ ){
       for (let j = 0 ; j < this.width ; j++ ){
-        payload += this.getColor(j,i)+",";
+        payload.push(this.getColor(j,i));
       }
     }
     fetch('http://localhost:3000/publish', {
-      headers: { "Content-Type": "text/plain" },
+      headers: { "Content-Type": "application/json" },
       method: 'POST',
-      body: payload
+      body: JSON.stringify({ gif: false, payload})
     })
   }
   setcolor(color) {
@@ -557,14 +557,14 @@ class Canvas {
   	});
   	// gif.render();
 
-    var payload = new Array()
+    var payload = [];
     this.gifFrames.forEach(frame => {
       payload.push(frame)
     });
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
-      body: JSON.stringify({payload})
+      body: JSON.stringify({gif:true, payload})
     })
   }
 
