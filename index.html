@@ -341,11 +341,10 @@ class Canvas {
     this.ctx.fillStyle = "white";
     this.ctx.globalAlpha = 1;
     this.ctx.fillRect(0, 0, this.w, this.h);
-    this.data = [...Array(this.width)].map(e => Array(this.height).fill([255, 255, 255, 255]));
+    this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
     this.steps = [];
     this.redo_arr = [];
     this.frames = [];
-    this.gifFrames = [];
     
     this.previous_point = new Point(undefined,undefined)
     // Moved on-click to on-mouse-up to tell the difference
@@ -412,7 +411,7 @@ class Canvas {
       } else if (tools[Tool.eraser]) {
         var temp = this.color;
         var tga = this.ctx.globalAlpha;
-        this.setcolor([255, 255, 255, 255]);
+        this.setcolor([0, 0, 0, 255]);
         this.draw(x, y);
         this.setcolor(temp);
         this.ctx.globalAlpha = tga;
@@ -462,11 +461,11 @@ class Canvas {
   rgbToHex(r, g, b) {
     if (r > 255 || g > 255 || b > 255)
         throw "Invalid color component";
-    return ((r << 16) | (g << 8) | b).toString(16);
+    return "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
   }
   getColor(x, y){
     var p = document.querySelector("#canvas").getContext('2d').getImageData(Math.floor(x * (window.board.w / window.board.width)), Math.floor(y * (window.board.h / window.board.height)), Math.floor(window.board.w / window.board.width), Math.floor(window.board.h / window.board.height)).data;
-    return "#" + ("000000" + this.rgbToHex(p[0], p[1], p[2])).slice(-6);
+    return this.rgbToHex(p[0], p[1], p[2]);
   }
   publish(){
     var payload = [];
@@ -517,14 +516,6 @@ class Canvas {
     var img = new Image();
     img.src = data || this.canvas.toDataURL();
     this.frames.push([img,this.data.map(inner => inner.slice())]);
-
-      var frame = [];
-      for (let i = 0 ; i < this.height ; i++ ){
-        for (let j = 0 ; j < this.width ; j++ ){
-          frame.push(this.getColor(j,i))
-        }
-      }
-      this.gifFrames.push(frame)
   }
 
   deleteFrame(f) {
@@ -549,18 +540,28 @@ class Canvas {
   }
 
   renderGIF() {
-  	this.frames.forEach(frame => {
+    var payload = []
+    var x,i,j;
+    this.frames.forEach(frame => {
+
   		gif.addFrame(frame[0], {
       		copy: true,
       		delay: 100
     	});
-  	});
-  	// gif.render();
 
-    var payload = [];
-    this.gifFrames.forEach(frame => {
-      payload.push(frame)
+      var img = frame[1]
+      var gifFrame = []
+      for (i=0; i<this.width; i++) {
+        for (j=0; j<this.height; j++) {
+          var hex_value = this.rgbToHex(img[j][i][0], img[j][i][1], img[j][i][2])
+          gifFrame.push(hex_value)
+        }
+      }
+      payload.push(gifFrame)
     });
+  	// gif.render();
+    console.log(payload)
+
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
@@ -680,8 +681,8 @@ class Frames {
 }
 
 window.onload = function () {
-  let canvasData = localStorage.getItem('pc-canvas-data');
-  if(canvasData){
+  let canvasData// = localStorage.getItem('pc-canvas-data');
+  if(canvasData) {
     data = JSON.parse(canvasData);
     window.colors = data.colors;
     if(window.board == undefined){
@@ -758,12 +759,12 @@ function createProject(width, height) {
   window.board.ctx.fillStyle = "black";
   window.board.ctx.globalAlpha = 1;
   window.board.ctx.fillRect(0, 0, window.board.w, window.board.h);
-  window.board.data = [...Array(window.board.width)].map(e => Array(window.board.height).fill([255, 255, 255, 255]));
+  window.board.data = [...Array(window.board.width)].map(e => Array(window.board.height).fill([0, 0, 0, 255]));
   window.board.steps = [];
   window.board.redo_arr = [];
   window.board.frames = [];
 
-  window.board.setcolor([255, 255, 255, 255]);
+  window.board.setcolor([0, 0, 0, 255]);
   if (window.dim){
     window.dim.close();
   }
