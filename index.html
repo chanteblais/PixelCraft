@@ -101,12 +101,10 @@ class Canvas {
     this.ctx.globalAlpha = 1;
     this.ctx.fillRect(0, 0, this.w, this.h);
     this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
-    this.blankData = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
     this.steps = [];
     this.redo_arr = [];
     this.frames = [];
     this.currentFrame = 0;
-    this.blankFrame;
     
     this.previous_point = new Point(undefined,undefined)
     // Moved on-click to on-mouse-up to tell the difference
@@ -306,7 +304,7 @@ class Canvas {
     } else {
       var img = new Image();
       img.src = this.canvas.toDataURL();
-      let frame = [img,this.blankData.map(inner => inner.slice())];
+      let frame = [img,this.data.map(inner => inner.slice())];
       this.blankFrame = frame;
       return frame;
     }
