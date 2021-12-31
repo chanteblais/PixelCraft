@@ -468,16 +468,18 @@ class Canvas {
     return this.rgbToHex(p[0], p[1], p[2]);
   }
   publish(){
-    var payload = [];
+    var frame = [];
     for (let i = 0 ; i < this.height ; i++ ){
       for (let j = 0 ; j < this.width ; j++ ){
-        payload.push(this.getColor(j,i));
+        frame.push(this.getColor(j,i));
       }
     }
+    var payload = [];
+    payload[0] = frame;
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
-      body: JSON.stringify({ gif: false, payload})
+      body: JSON.stringify({ gif: false, payload: payload})
     })
   }
   setcolor(color) {
@@ -541,9 +543,8 @@ class Canvas {
 
   renderGIF() {
     var payload = []
-    var x,i,j;
+    var i,j;
     this.frames.forEach(frame => {
-
   		gif.addFrame(frame[0], {
       		copy: true,
       		delay: 100
