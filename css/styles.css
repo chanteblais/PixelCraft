@@ -190,7 +190,7 @@ body {
     transform: translateY(-50%);
     padding: 0px;
     color: white;
-    max-width: 150px;
+    max-width: 32px;
 }
 
 #toolbar .item {
