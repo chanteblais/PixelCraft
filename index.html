@@ -25,254 +25,12 @@
 <meta name="twitter:image" content="https://rgab1508.github.io/PixelCraft/images/overview.png" />
 <link rel="shortcut icon" type="image/png" href="icons/logo.png"/>
 <link rel="manifest" href="manifest.json">
-<link href="css/all.min.css" rel="stylesheet"> 
+<link href="css/all.min.css" rel="stylesheet"/>
+<link href="css/styles.css" rel="stylesheet"/>
 <script src="lib/Matrix.js" async></script>
 <script src="lib/Shapes.js" async></script>
 <script src="lib/Transformation.js" async></script>
 <script src="lib/gif.js"></script>
-<style>
-@font-face {
-  font-family: 'Martel Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('Martel Sans Regular'), local('MartelSans-Regular'), url(webfonts/martel-sans.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-* {
-  font-family: 'Martel Sans', sans-serif;
-}
-
-body {
-  background-color: #232125;
-  margin: 0px;
-}
-
-#popup, #frames {
-  background-color: #332f35;
-  color: white;
-  font-size: 20px;
-  padding: 30px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.1, 0.1);
-  text-align: center;
-  max-width: 420px;
-  width: 70%;
-  transition: 0.2s all;
-  z-index: 2;
-  border-radius: 5px;
-}
-#popup {
-  display: none;
-}
-#popup h3 {
-  line-height: 30px;
-}
-
-#frames {
-  display: none;
-  padding: 10px;
-}
-
-#frames #gallery {
-  padding: 10px 10px 10px 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  scroll-behavior: smooth;
-}
-
-#frames .btn {
-  position: absolute;
-  background-color: rgba(255,255,255,0.5);
-  color: black;
-  font-size: 20px;
-  padding: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  z-index: 2;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-}
-
-#frames img {
-  width: 100px;
-  margin: 10px; 
-}
-
-#width,
-#height {
-  background-color: #262327;
-  color: white;
-  margin: 10px;
-  padding: 5px;
-  font-size: 14px;
-  font-weight: bolder;
-  border: none;
-  border-radius: 3px;
-  max-width: 60px;
-}
-
-#close {
-  background-color: #262327;
-  color: white;
-  margin: 15px auto 5px auto;
-  padding: 5px 10px 5px 10px;
-  font-size: 18px;
-  font-weight: bolder;
-  display: block;
-  border: none;
-  border-radius: 3px;
-  max-width: 60px;
-  transition: 0.2s all;
-}
-
-#close:hover {
-  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
-}
-
-#canvas {
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 75%;
-  max-width: 550px;
-  display: none;
-  cursor: crosshair;
-  touch-action: none;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
-#toolbar {
-  position: fixed;
-  top: 50%;
-  left: 0%;
-  transform: translateY(-50%);
-  padding: 0px;
-  color: white;
-  max-width: 150px;
-}
-
-#toolbar .item {
-  display: inline-block;
-  float: left;
-  padding: 15px;
-  border: 1px solid #FFF;
-  cursor: pointer;
-  height: 32px;
-  width: 32px;
-  font-family: Arial, FontAwesome;
-  font-size: 24px;
-}
-
-#palette {
-  position: fixed;
-  top: 50%;
-  right: 0%;
-  transform: translateY(-50%);
-  padding: 0px;
-  color: white;
-  max-width: 100px;
-}
-
-#palette .item {
-  display: inline-block;
-  float: left;
-  padding: 25px;
-  cursor: pointer;
-}
-
-path {
-  fill: white;
-}
-
-.item:hover {
-  background-color: grey;
-}
-
-.menubtn {
-  position: fixed;
-  left: 20px;
-  top: 20px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-  background-color: #332f35;
-  color: white;
-  padding: 5px 15px 5px 15px;
-  border-radius: 5px;
-  font-size: 25px;
-  font-weight: bolder;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.menu {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  border-radius: 5px;
-  padding: 0px;
-  color: white;
-  z-index: 3;
-  display: none;
-}
-
-.menu li {
-  padding: 5px 20px 5px 20px;
-  list-style: none;
-  background-color: #332f35;
-  cursor: pointer;
-}
-
-.menu li i {
-  padding-right: 10px;
-}
-
-.menu li a {
-  text-decoration: none;
-  color: white;
-}
-
-@media only screen and (max-width: 600px) {
-  #toolbar {
-    position: fixed;
-    top: 100%;
-    left: 50%;
-    min-width: 100%;
-    transform: translate(-50%, -100%);
-    padding: 0px;
-    color: white;
-  }
-  #palette {
-    position: fixed;
-    top: 0%;
-    transform: translateY(0%);
-    min-width: 100%;
-    padding: 0px;
-    color: white;
-  }
-  #toolbar .item {
-    width: 20px;
-    height: 20px;
-  }
-  #palette .item {
-    padding: 15px;
-  }
-  .menubtn {
-    top:70px;
-  }
-  .menu {
-    top:110px;
-  }
-}
-</style>
 </head>
 <body>
     <div class="menubtn">Glåüm</div>
@@ -288,26 +46,27 @@ path {
       <input type="text" id="width" value="16">X<input type="text" id="height" value="16">
       <button id="close">OK</button>
     </div>
-    <div id="frames" onblur="Frames.close()" tabindex="0">
-    <div class="btn" style="left: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft-=100;"><i class="fa fa-chevron-left"></i></div>
-    <div class="btn" style="right: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft+=100;"><i class="fa fa-chevron-right"></i></div>
-    <div id="gallery"></div>
+    <div id="main">
+        <canvas id="canvas"></canvas>
+        <div id="frames" tabindex="0">
+<!--            <div class="btn" style="left: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft-=100;"><i class="fa fa-chevron-left"></i></div>-->
+<!--            <div class="btn" style="right: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft+=100;"><i class="fa fa-chevron-right"></i></div>-->
+            <div id="gallery"></div>
+        </div>
     </div>
-    </div>
-    <canvas id="canvas"></canvas>
     <div id="toolbar">
       <span class="item" onclick="board.setmode(0)" style="background-color: grey;"><i class="fas fa-pencil-alt"></i></span>
       <span class="item" onclick="board.setmode(1)"><i class="fas fa-eraser"></i></span>
       <span class="item" onclick="board.setmode(2)"><i class="fas fa-fill"></i></span>
-      <span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>
-      <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>
-      <span class="item" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>
+<!--      <span class="item" onclick="board.setmode(3)"><i class="fas fa-slash"></i></span>-->
+<!--      <span class="item" onclick="board.setmode(4)"><i class="far fa-circle"></i></span>-->
+<!--      <span class="item" onclick="board.setmode(5)"><i class="far fa-circle" style="transform: rotateX(45deg);"></i></span>-->
       <span class="item" onclick="board.addFrame()"><i class="fas fa-plus"></i></span>
-      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>
-      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>
+<!--      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>-->
+<!--      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>-->
       <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
-      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>
-      <span class="item" onclick="Frames.open()"><i class="fas fa-eye"></i></span>
+<!--      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>-->
+<!--      <span class="item" onclick="Frames.load()"><i class="fas fa-eye"></i></span>-->
     </div>
     <div id="palette"></div>
 </body>
@@ -345,11 +104,12 @@ class Canvas {
     this.steps = [];
     this.redo_arr = [];
     this.frames = [];
+    this.currentFrame = 0;
     
     this.previous_point = new Point(undefined,undefined)
     // Moved on-click to on-mouse-up to tell the difference
     //  between a click and a mouse-drag + click
-
+    
     this.canvas.addEventListener("mousemove", e => {
       if (this.active) {
         var rect = this.canvas.getBoundingClientRect();
@@ -370,7 +130,7 @@ class Canvas {
         this.publish();
       }
     });
-
+    
     this.canvas.addEventListener("touchmove", e => {
       var rect = this.canvas.getBoundingClientRect();
       var x = e.touches[0].clientX - rect.left;
@@ -389,7 +149,7 @@ class Canvas {
       }
       this.publish();
     })
-
+    
     this.canvas.addEventListener("mousedown", e => {
       this.previous_point = new Point(undefined,undefined)
       this.active = true;
@@ -435,7 +195,7 @@ class Canvas {
         var radiusY = +prompt("Y radius?");
         var lp = ellipse(radiusX, radiusY, center);
         for (p of lp)
-          this.draw(p.x, p.y);
+        this.draw(p.x, p.y);
       } else {
         this.previous_point = new Point(x,y);
         this.draw(x, y);
@@ -444,10 +204,11 @@ class Canvas {
     });
   }
   draw(x, y, count) {
-  	if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
-    	this.data[x][y] = this.color;
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      this.data[x][y] = this.color;
     	this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
     	if (!count && JSON.stringify(this.steps[this.steps.length-1])!==JSON.stringify([x,y,this.color,this.ctx.globalAlpha])) this.steps.push([x,y,this.color,this.ctx.globalAlpha]);
+      this.updateFrame();
 	  }
   }
   erase(x, y){
@@ -468,16 +229,18 @@ class Canvas {
     return this.rgbToHex(p[0], p[1], p[2]);
   }
   publish(){
-    var payload = [];
+    var frame = [];
     for (let i = 0 ; i < this.height ; i++ ){
       for (let j = 0 ; j < this.width ; j++ ){
-        payload.push(this.getColor(j,i));
+        frame.push(this.getColor(j,i));
       }
     }
+    var payload = [];
+    payload[0] = frame;
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
-      body: JSON.stringify({ gif: false, payload})
+      body: JSON.stringify({ gif: false, payload: payload})
     })
   }
   setcolor(color) {
@@ -510,12 +273,41 @@ class Canvas {
     this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
     this.setcolor(this.color);
     this.setmode(Tool.pen);
+    this.publish();
+    this.updateFrame();
   }
 
-  addFrame(data=null) {
+  addFrame() {
+    const frame = this.getEmptyFrame();
+    if (this.frames.length > 0){
+        this.currentFrame++;
+    }
+    this.frames.push(frame);
+    Frames.load();
+    this.clear();
+  }
+
+  updateFrame(){
+    this.frames[this.currentFrame] = this.getCanvasImage();
+    Frames.load();
+  }
+
+  getCanvasImage(){
     var img = new Image();
-    img.src = data || this.canvas.toDataURL();
-    this.frames.push([img,this.data.map(inner => inner.slice())]);
+    img.src = this.canvas.toDataURL();
+    return [img,this.data.map(inner => inner.slice())];
+  }
+
+  getEmptyFrame(){
+    if (this.blankFrame) {
+      return this.blankFrame
+    } else {
+      var img = new Image();
+      img.src = this.canvas.toDataURL();
+      let frame = [img,this.data.map(inner => inner.slice())];
+      this.blankFrame = frame;
+      return frame;
+    }
   }
 
   deleteFrame(f) {
@@ -523,7 +315,6 @@ class Canvas {
   }
 
   loadFrame(f) {
-  	this.clear();
   	var img = this.frames[f][1];
   	var tmp_color = this.color;
   	var tmp_alpha = this.ctx.globalAlpha;
@@ -541,9 +332,8 @@ class Canvas {
 
   renderGIF() {
     var payload = []
-    var x,i,j;
+    var i,j;
     this.frames.forEach(frame => {
-
   		gif.addFrame(frame[0], {
       		copy: true,
       		delay: 100
@@ -560,7 +350,6 @@ class Canvas {
       payload.push(gifFrame)
     });
   	// gif.render();
-
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
@@ -653,23 +442,23 @@ class Popup {
 }
 
 class Frames {
-  static open() {
-  	document.querySelector("#frames").style.display = "block";
-    document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
-    document.querySelector("#frames").focus();
+  static load() {
+  	// document.querySelector("#frames").style.display = "block";
+    // document.querySelector("#frames").style.transform = "translate(-50%,-50%) scale(1,1)";
+    // document.querySelector("#frames").focus();
     document.querySelector("#frames #gallery").innerHTML="";
     for (var frame of board.frames) document.querySelector("#frames #gallery").appendChild(frame[0]);
     document.querySelectorAll("#frames #gallery img").forEach((x,i) => {
-    	x.onclick = (e) => {
+      x.onclick = (e) => {
+        board.currentFrame = i;
     		board.loadFrame(i);
-    		Frames.close();
     	};
     	x.oncontextmenu = (e) => {
     		e.preventDefault();
     		var del_confirmation = confirm("Delete?");
     		if (del_confirmation) {
     			board.deleteFrame(i);
-    			Frames.open();
+    			Frames.load();
     		}
     	};
     });
@@ -728,12 +517,12 @@ window.onload = function () {
     });
   }
   else {
-    console.log("Creating new project");
     newProject();
   }
   document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
-
   document.querySelector("#palette").addEventListener("contextmenu",e=>e.preventDefault());
+
+  Frames.load();
 }
 
 document.querySelector("#close").onclick = function () {
@@ -763,7 +552,7 @@ function createProject(width, height) {
   window.board.redo_arr = [];
   window.board.frames = [];
 
-  window.board.setcolor([0, 0, 0, 255]);
+  window.board.setcolor([255, 255, 255, 255]);
   if (window.dim){
     window.dim.close();
   }
@@ -780,6 +569,7 @@ function createProject(width, height) {
     link.href = url;
     link.click();
   });
+  window.board.addFrame();
 }
 
 document.querySelector(".menubtn").onclick = function () {
