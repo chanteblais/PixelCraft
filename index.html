@@ -560,7 +560,7 @@ class Canvas {
       payload.push(gifFrame)
     });
   	// gif.render();
-
+    console.log("sending data...")
     fetch('http://localhost:3000/publish', {
       headers: { "Content-Type": "application/json" },
       method: 'POST',
@@ -728,12 +728,12 @@ window.onload = function () {
     });
   }
   else {
-    console.log("Creating new project");
     newProject();
   }
   document.querySelector("#palette").innerHTML = colors.map(x => `<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`).join("\n");
 
   document.querySelector("#palette").addEventListener("contextmenu",e=>e.preventDefault());
+  Frames.open();
 }
 
 document.querySelector("#close").onclick = function () {
