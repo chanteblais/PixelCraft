@@ -49,8 +49,8 @@
     <div id="main">
         <canvas id="canvas"></canvas>
         <div id="frames" tabindex="0">
-<!--            <div class="btn" style="left: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft-=100;"><i class="fa fa-chevron-left"></i></div>-->
-<!--            <div class="btn" style="right: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft+=100;"><i class="fa fa-chevron-right"></i></div>-->
+           <!-- <div class="btn" style="left: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft-=100;"><i class="fa fa-chevron-left"></i></div>
+            <div class="btn" style="right: 10px;" onclick="document.querySelector('#frames #gallery').scrollLeft+=100;"><i class="fa fa-chevron-right"></i></div> -->
             <div id="gallery"></div>
         </div>
     </div>
@@ -65,7 +65,7 @@
 <!--      <span class="item" onclick="board.undo()"><i class="fas fa-undo"></i></span>-->
 <!--      <span class="item" onclick="board.redo()"><i class="fas fa-redo"></i></span>-->
       <span class="item" onclick="board.clear()"><i class="fas fa-trash"></i></span>
-<!--      <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span>-->
+     <!-- <span class="item" onclick="board.addImage()"><i class="fa fa-upload"></i></span> -->
 <!--      <span class="item" onclick="Frames.load()"><i class="fas fa-eye"></i></span>-->
     </div>
     <div id="palette"></div>
@@ -295,6 +295,13 @@ class Canvas {
   getCanvasImage(){
     var img = new Image();
     img.src = this.canvas.toDataURL();
+    img.draggable = true;
+    img.addEventListener('dragstart', this.handleDragStart, false);
+    // img.addEventListener('dragenter', this.handleDragEnter, false);
+    img.addEventListener('dragover', this.handleDragOver, false);
+    // img.addEventListener('dragleave', this.handleDragLeave, false);
+    img.addEventListener('drop', this.handleDrop, false);
+    img.addEventListener('dragend', this.handleDragEnd, false);
     return [img,this.data.map(inner => inner.slice())];
   }
 
@@ -429,6 +436,50 @@ class Canvas {
       }
     }
   }
+
+  
+    
+  handleDragStart(e) {
+      this.style.opacity = '0.4';
+      window.dragSrcEl = this;
+  
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', this.src);
+      return false;
+    }
+  
+    handleDragOver(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+  
+      e.dataTransfer.dropEffect = 'move';
+      
+      return false;
+    }
+  
+    // handleDragEnter(e) {
+    //   this.classList.add('over');
+    // }
+  
+    // handleDragLeave(e) {
+    //   this.classList.remove('over');
+    // }
+  
+    handleDrop(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      if (window.dragSrcEl != this) {
+        window.dragSrcEl.src = this.src;
+        this.src = e.dataTransfer.getData('text/plain');
+      }
+      return false;
+    }
+  
+    handleDragEnd(e) {
+      this.style.opacity = '1';
+    }
 }
 class Popup {
   constructor(s) {
@@ -602,7 +653,7 @@ function newProject(){
     [112, 146, 190, 255],
     [200, 191, 231, 255]
   ];
-  createProject(10,10);
+  createProject(16,16);
 }
 function filler(x, y, cc) {
   if (x >= 0 && x < board.width && y >= 0 && y < board.height) {

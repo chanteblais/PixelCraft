@@ -70,9 +70,14 @@ body {
 
 #frames #gallery {
     /*padding: 10px 10px 10px 10px;*/
-    overflow: hidden;
+    overflow-y: scroll;
+    /* overflow: hidden; */
     white-space: nowrap;
     scroll-behavior: smooth;
+}
+
+[draggable] {
+    user-select: none;
 }
 
 #frames .btn {
@@ -91,6 +96,8 @@ body {
 #frames img {
     width: 90px;
     margin: 5px;
+    cursor: move;
+    -webkit-touch-callout: none;
 }
 
 #width,
