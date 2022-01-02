@@ -30,49 +30,20 @@ class Canvas {
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
         this.steps = [];
-        this.redo_arr = [];
-        this.frames = [];
-        this.currentFrame = 0;
+        this.setcolor([255, 255, 255, 255]);
+        this.framesManager = new Frames(this.canvas, this.data, this)
+        this.framesManager.addFrame();
 
         this.previous_point = new Point(undefined, undefined)
 
         // Moved on-click to on-mouse-up to tell the difference between a click and a mouse-drag + click
         this.canvas.addEventListener("mousemove", e => {
             if (this.active) {
-                var rect = this.canvas.getBoundingClientRect();
-                var x = e.clientX - rect.left;
-                var y = e.clientY - rect.top;
-                x = Math.floor(this.width * x / this.canvas.clientWidth);
-                y = Math.floor(this.height * y / this.canvas.clientHeight);
-                if (this.tools[this.tool.pen]) {
-                    var p = new Point(x, y);
-                    if (!p.equals(this.previous_point)) {
-                        this.previous_point = p;
-                        this.draw(p.x, p.y);
-                    }
-                } else if (this.tools[this.tool.eraser]) {
-                    this.erase(x, y);
-                }
-                this.publish();
+                this.perform(e.clientX, e.clientY);
             }
         });
-
         this.canvas.addEventListener("touchmove", e => {
-            var rect = this.canvas.getBoundingClientRect();
-            var x = e.touches[0].clientX - rect.left;
-            var y = e.touches[0].clientY - rect.top;
-            x = Math.floor(this.width * x / this.canvas.clientWidth);
-            y = Math.floor(this.height * y / this.canvas.clientHeight);
-            if (this.tools[this.tool.pen]) {
-                var p = new Point(x, y);
-                if (!p.equals(this.previous_point)) {
-                    this.previous_point = p;
-                    this.draw(p.x, p.y);
-                }
-            } else if (this.tools[this.tool.eraser]) {
-                this.erase(x, y);
-            }
-            this.publish();
+            this.perform(e.touches[0].clientX, e.touches[0].clientY)
         })
 
         this.canvas.addEventListener("mousedown", e => {
@@ -106,6 +77,7 @@ class Canvas {
             }
             this.publish();
         });
+        this.framesManager.load();
     }
 
     filler(x, y, cc) {
@@ -125,8 +97,24 @@ class Canvas {
             this.data[x][y] = this.color;
             this.ctx.fillRect(Math.floor(x * (this.w / this.width)), Math.floor(y * (this.h / this.height)), Math.floor(this.w / this.width), Math.floor(this.h / this.height));
             if (!count && JSON.stringify(this.steps[this.steps.length - 1]) !== JSON.stringify([x, y, this.color, this.ctx.globalAlpha])) this.steps.push([x, y, this.color, this.ctx.globalAlpha]);
-            this.updateFrame();
+            this.framesManager.updateFrame();
         }
+    }
+
+    populate(img) {
+        // var img = this.frames[f][1];
+        var tmp_color = this.color;
+        var tmp_alpha = this.ctx.globalAlpha;
+        this.ctx.globalAlpha = 1;
+        var i, j;
+        for (i = 0; i < this.width; i++) {
+            for (j = 0; j < this.height; j++) {
+                this.setcolor(img[i][j]);
+                this.draw(i, j);
+            }
+        }
+        this.setcolor(tmp_color);
+        this.ctx.globalAlpha = tmp_alpha;
     }
 
     erase(x, y) {
@@ -198,138 +186,7 @@ class Canvas {
         this.setcolor(this.color);
         this.setmode(this.tool.pen);
         this.publish();
-        this.updateFrame();
-    }
-
-    addFrame() {
-        const frame = this.getEmptyFrame();
-        if (this.frames.length > 0) {
-            this.currentFrame++;
-        }
-        this.frames.splice(this.currentFrame, 0, frame);
-        this.loadFrame(this.currentFrame);
-    }
-
-    duplicateFrame() {
-        const frame = this.getCanvasImage();
-        if (this.frames.length > 0) {
-            this.currentFrame++;
-        }
-        this.frames.splice(this.currentFrame, 0, frame);
-        Frames.load();
-    }
-
-    updateFrame() {
-        this.frames[this.currentFrame] = this.getCanvasImage();
-        Frames.load();
-    }
-
-    getCanvasImage() {
-        var img = new Image();
-        img.src = this.canvas.toDataURL();
-        img.draggable = true;
-        img.addEventListener('dragstart', this.handleDragStart, false);
-        // img.addEventListener('dragenter', this.handleDragEnter, false);
-        img.addEventListener('dragover', this.handleDragOver, false);
-        // img.addEventListener('dragleave', this.handleDragLeave, false);
-        img.addEventListener('drop', this.handleDrop, false);
-        img.addEventListener('dragend', this.handleDragEnd, false);
-        return [img, this.data.map(inner => inner.slice())];
-    }
-
-    getEmptyFrame() {
-        if (this.blankFrame) {
-            return this.blankFrame
-        } else {
-            let frame = this.getCanvasImage();
-            this.blankFrame = frame;
-            this.getCanvasImage();
-            return frame
-        }
-    }
-
-    deleteFrame(f) {
-        this.frames.splice(f, 1);
-    }
-
-    loadFrame(f) {
-        var img = this.frames[f][1];
-        var tmp_color = this.color;
-        var tmp_alpha = this.ctx.globalAlpha;
-        this.ctx.globalAlpha = 1;
-        var i, j;
-        for (i = 0; i < this.width; i++) {
-            for (j = 0; j < this.height; j++) {
-                this.setcolor(img[i][j]);
-                this.draw(i, j);
-            }
-        }
-        this.setcolor(tmp_color);
-        this.ctx.globalAlpha = tmp_alpha;
-    }
-
-    renderGIF() {
-        var payload = []
-        var i, j;
-        this.frames.forEach(frame => {
-            gif.addFrame(frame[0], {
-                copy: true,
-                delay: 100
-            });
-
-            var img = frame[1]
-            var gifFrame = []
-            for (i = 0; i < this.width; i++) {
-                for (j = 0; j < this.height; j++) {
-                    var hex_value = this.rgbToHex(img[j][i][0], img[j][i][1], img[j][i][2])
-                    gifFrame.push(hex_value)
-                }
-            }
-            payload.push(gifFrame)
-        });
-        // gif.render();
-        fetch('http://localhost:3000/publish', {
-            headers: {"Content-Type": "application/json"},
-            method: 'POST',
-            body: JSON.stringify({gif: true, payload})
-        })
-    }
-
-    undo() {
-        this.clear();
-        this.redo_arr.push(this.steps.pop());
-        var step;
-        this.steps.forEach(step => {
-            this.setcolor(step[2]);
-            this.ctx.globalAlpha = step[3];
-            this.draw(step[0], step[1], true);
-        });
-    }
-
-    redo() {
-        this.steps.push(this.redo_arr.pop());
-        var step;
-        this.steps.forEach(step => {
-            this.setcolor(step[2]);
-            this.ctx.globalAlpha = step[3];
-            this.draw(step[0], step[1], true);
-        });
-    }
-
-    saveInLocal() {
-        /*let a = this.frames.map(frame=> [frame[0].src,frame[1]]);
-        let f =  JSON.stringify(a);*/
-        let d = {
-            'colors': window.colors,
-            'currColor': this.color,
-            'width': this.width,
-            'height': this.height,
-            'url': this.canvas.toDataURL(),
-            'steps': this.steps,
-            'redo_arr': this.redo_arr,
-            'dim': window.dim,
-        }
-        localStorage.setItem('pc-canvas-data', JSON.stringify(d));
+        this.framesManager.updateFrame();
     }
 
     addImage() {
@@ -359,7 +216,7 @@ class Canvas {
                             var pix = pxctx.getImageData(10 * i, 10 * j, 10, 10).data;
                             pix.forEach((x, k) => {
                                 avg[k % 4] += x;
-                                if (k % 4 == 0) ctr++;
+                                if (k % 4 === 0) ctr++;
                             });
                             avg = avg.map(x => ~~(x / ctr));
                             _this.setcolor(avg);
@@ -371,38 +228,21 @@ class Canvas {
         }
     }
 
-
-    handleDragStart(e) {
-        this.style.opacity = '0.4';
-        window.dragSrcEl = this;
-
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.src);
-        return false;
-    }
-
-    handleDragOver(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
+    perform(clientX, clientY) {
+        var rect = this.canvas.getBoundingClientRect();
+        var x = clientX - rect.left;
+        var y = clientY - rect.top;
+        x = Math.floor(this.width * x / this.canvas.clientWidth);
+        y = Math.floor(this.height * y / this.canvas.clientHeight);
+        if (this.tools[this.tool.pen]) {
+            var p = new Point(x, y);
+            if (!p.equals(this.previous_point)) {
+                this.previous_point = p;
+                this.draw(p.x, p.y);
+            }
+        } else if (this.tools[this.tool.eraser]) {
+            this.erase(x, y);
         }
-
-        e.dataTransfer.dropEffect = 'move';
-
-        return false;
-    }
-
-    handleDrop(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        }
-        if (window.dragSrcEl !== this) {
-            window.dragSrcEl.src = this.src;
-            this.src = e.dataTransfer.getData('text/plain');
-        }
-        return false;
-    }
-
-    handleDragEnd(e) {
-        this.style.opacity = '1';
+        this.publish();
     }
 }

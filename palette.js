@@ -1,8 +1,26 @@
 class Palette {
+    static colors = [
+        [255, 255, 255, 255],
+        [0, 0, 0, 255],
+        [0, 255, 255, 255],
+        [0, 0, 255, 255],
+        [0, 0, 128, 255],
+        [0, 128, 128, 255],
+        [0, 128, 0, 255],
+        [0, 255, 0, 255],
+        [255, 0, 0, 255],
+        [128, 0, 0, 255],
+        [128, 0, 128, 255],
+        [255, 0, 255, 255],
+        [255, 255, 0, 255],
+        [192, 192, 192, 255],
+        [128, 128, 128, 255]
+    ]
+
     static populate() {
         let palette = document.querySelector("#palette");
         palette.addEventListener("contextmenu", e => e.preventDefault());
-        colors.forEach(color => {
+        this.colors.forEach(color => {
             let colorElement = document.createElement('span');
             colorElement.classList.add("item");
             colorElement.style.backgroundColor = `rgb(${color[0]},${color[1]},${color[2]})`;
