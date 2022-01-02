@@ -102,7 +102,6 @@ class Canvas {
     }
 
     populate(img) {
-        // var img = this.frames[f][1];
         var tmp_color = this.color;
         var tmp_alpha = this.ctx.globalAlpha;
         this.ctx.globalAlpha = 1;
@@ -124,6 +123,35 @@ class Canvas {
         this.draw(x, y);
         this.setcolor(temp);
         this.ctx.globalAlpha = tga;
+    }
+
+    shiftFrameRightAndDuplicate() {
+        let color = this.color;
+        this.framesManager.duplicateFrame();
+        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
+        let i, j;
+
+        for (i = 1; i < this.width; i++) {
+            for (j = 0; j < this.height; j++) {
+                this.setcolor(img[i - 1][j]);
+                this.draw(i, j);
+            }
+        }
+        this.setcolor(color);
+    }
+
+    shiftFrameLeft() {
+        let color = this.color;
+        this.framesManager.duplicateFrame()
+        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
+        let i, j;
+        for (i = 1; i < this.width-1; i++) {
+            for (j = 0; j < this.height; j++) {
+                this.setcolor(img[i + 1][j]);
+                this.draw(i, j);
+            }
+        }
+        this.setcolor(color);
     }
 
     rgbToHex(r, g, b) {
