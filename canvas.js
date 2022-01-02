@@ -13,7 +13,7 @@ class Canvas {
         "clearCanvas": 9
     };
     tools = [true, false, false, false, false, false];
-    
+
     constructor(width, height) {
         this.canvas = document.querySelector("#canvas");
         this.canvas.width = 10 * width;
@@ -145,24 +145,18 @@ class Canvas {
         this.framesManager.duplicateFrame()
         let img = this.framesManager.frames[this.framesManager.currentFrame][1];
         let i, j;
-        for (i = 1; i < this.width-1; i++) {
+        for (i = 1; i < this.width - 1; i++) {
             for (j = 0; j < this.height; j++) {
-                this.setcolor(img[i + 1][j]);
+                this.setColor(img[i + 1][j]);
                 this.draw(i, j);
             }
         }
-        this.setcolor(color);
-    }
-
-    rgbToHex(r, g, b) {
-        if (r > 255 || g > 255 || b > 255)
-            throw "Invalid color component";
-        return "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
+        this.setColor(color);
     }
 
     getColor(x, y) {
         const p = document.querySelector("#canvas").getContext('2d').getImageData(Math.floor(x * (window.board.w / window.board.width)), Math.floor(y * (window.board.h / window.board.height)), Math.floor(window.board.w / window.board.width), Math.floor(window.board.h / window.board.height)).data;
-        return this.rgbToHex(p[0], p[1], p[2]);
+        return ColourUtils.rgbToHex(p[0], p[1], p[2]);
     }
 
     publish() {
@@ -184,7 +178,10 @@ class Canvas {
     setColor(color) {
         this.ctx.globalAlpha = 1;
         this.color = color;
-        this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
+        this.ctx.fillStyle = ColourUtils.getCSSColourFromRGBArray(color);
+        if (window.palette instanceof Palette) {
+            window.palette.highlightSelectedColor(color);
+        }
     }
 
     setmode(i) {

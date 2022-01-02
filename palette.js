@@ -30,32 +30,39 @@ class Palette {
             palette.append(this.createColorSwatch([0, 0, 0, 255], true));
         }
         // Color picker
-        document.querySelector("#colorpicker").addEventListener("input", function (event) {
+        let colorPicker = document.querySelector("#colorpicker");
+        colorPicker.addEventListener("input", function (event) {
             let hex = event.target.value;
-            board.setColor(window.palette.hexToRgba(hex));
+            board.setColor(ColourUtils.hexToRgba(hex));
         }, false);
-        document.querySelector("#colorpicker").addEventListener("change", function (event) {
-            let hex = event.target.value;
-            let rgba = window.palette.hexToRgba(hex);
-            let rgb = `rgb(${rgba[0]}, ${rgba[1]}, ${rgba[2]})`;
-            let swatches = palette.children;
 
-            // Check if color is already in the swatches
-            for (let swatch of swatches) {
-                if (swatch.style.backgroundColor === rgb) {
-                    return
-                }
-            }
-
-            // Update slots
-            let swatch = swatches[window.palette.currentSwatch];
-            swatch.classList.remove("empty");
-            swatch.style.backgroundColor = rgb;
-            window.palette.currentSwatch++;
-            if (window.palette.currentSwatch === window.palette.totalSwatches) {
-                window.palette.currentSwatch = window.palette.colors.length;
-            }
+        colorPicker.addEventListener("blur", function (event) {
+            window.palette.saveSelectedColor(event, palette);
         }, false);
+    }
+
+    saveSelectedColor(event, palette) {
+        let hex = event.target.value;
+        let rgba = ColourUtils.hexToRgba(hex);
+        let rgb = ColourUtils.getCSSColourFromRGBArray(rgba);
+        let swatches = palette.children;
+
+        // Check if color is already in the swatches
+        for (let swatch of swatches) {
+            if (swatch.style.backgroundColor === rgb) {
+                return
+            }
+        }
+
+        // Update slots
+        palette.replaceChild(this.createColorSwatch(rgba, false), swatches[window.palette.currentSwatch]);
+        window.palette.currentSwatch++;
+        if (window.palette.currentSwatch === window.palette.totalSwatches) {
+            window.palette.currentSwatch = window.palette.colors.length;
+        }
+
+        // Updates color (so the swatch gets highlighted)
+        board.setColor(ColourUtils.hexToRgba(hex))
     }
 
     createColorSwatch(color, transparent) {
@@ -64,29 +71,27 @@ class Palette {
         if (transparent) {
             swatch.classList.add("empty");
         } else {
-            swatch.style.backgroundColor = `rgb(${color[0]},${color[1]},${color[2]})`;
+            swatch.style.backgroundColor = ColourUtils.getCSSColourFromRGBArray(color);
         }
         swatch.onclick = function () {
             board.setColor(color);
-            palette.highlightSelectedColor(this)
         };
         swatch.oncontextmenu = function () {
             board.setColor(color);
             board.ctx.globalAlpha = prompt('Transparency(0-1)?');
-            palette.highlightSelectedColor(this);
         };
         return swatch;
     }
 
-    highlightSelectedColor(clr) {
-        document.querySelectorAll("#palette .item").forEach(x => x.classList.remove("selected"));
-        clr.classList.add("selected")
-    }
-
-    hexToRgba(hex) {
-        const r = parseInt(hex.substr(1, 2), 16)
-        const g = parseInt(hex.substr(3, 2), 16)
-        const b = parseInt(hex.substr(5, 2), 16)
-        return [r, g, b, 255];
+    highlightSelectedColor(colorArray) {
+        document.querySelectorAll("#palette .item")
+            .forEach(swatch => {
+                let swatchColour = ColourUtils.getRGBArrayFromCSSColour(swatch.style.backgroundColor);
+                if (swatchColour && swatchColour.toString() !== colorArray.toString()) {
+                    swatch.classList.remove("selected")
+                } else {
+                    swatch.classList.add("selected")
+                }
+            });
     }
 }
