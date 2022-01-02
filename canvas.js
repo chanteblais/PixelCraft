@@ -125,14 +125,12 @@ class Canvas {
         this.ctx.globalAlpha = tga;
     }
 
-    shiftFrameRight() {
+    shiftFrameRightAndDuplicate() {
         let color = this.color;
-        let img = this.framesManager.frames[0][1];
+        this.framesManager.duplicateFrame();
+        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
         let i, j;
-        for (j = 0; j < this.height; j++) {
-            this.setcolor([0, 0, 0, 255]);
-            this.draw(0, j);
-        }
+
         for (i = 1; i < this.width; i++) {
             for (j = 0; j < this.height; j++) {
                 this.setcolor(img[i - 1][j]);
@@ -144,12 +142,9 @@ class Canvas {
 
     shiftFrameLeft() {
         let color = this.color;
-        let img = this.framesManager.frames[0][1];
+        this.framesManager.duplicateFrame()
+        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
         let i, j;
-        for (j = 0; j < this.height; j++) {
-            this.setcolor([0, 0, 0, 255]);
-            this.draw(this.width-1, j);
-        }
         for (i = 1; i < this.width-1; i++) {
             for (j = 0; j < this.height; j++) {
                 this.setcolor(img[i + 1][j]);
