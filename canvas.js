@@ -140,7 +140,7 @@ class Canvas {
         this.setcolor(color);
     }
 
-    shiftFrameLeft() {
+    shiftFrameLeftAndDuplicate() {
         let color = this.color;
         this.framesManager.duplicateFrame()
         let img = this.framesManager.frames[this.framesManager.currentFrame][1];

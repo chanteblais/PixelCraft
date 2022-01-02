@@ -49,7 +49,7 @@ class Frames {
     }
 
     getCanvasImage() {
-        var img = new Image();
+        let img = new Image();
         img.src = this.canvas.toDataURL();
         img.draggable = true;
         img.addEventListener('dragstart', this.handleDragStart, false);
