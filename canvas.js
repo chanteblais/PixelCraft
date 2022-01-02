@@ -1,4 +1,19 @@
 class Canvas {
+
+    tool = {
+        "pen": 0,
+        "eraser": 1,
+        "fillBucket": 2,
+        "line": 3,
+        "circle": 4,
+        "ellipse": 5,
+        "addFrame": 6,
+        "undo": 7,
+        "redo": 8,
+        "clearCanvas": 9
+    };
+    tools = [true, false, false, false, false, false];
+    
     constructor(width, height) {
         this.canvas = document.querySelector("#canvas");
         this.canvas.width = 10 * width;
@@ -29,13 +44,13 @@ class Canvas {
                 var y = e.clientY - rect.top;
                 x = Math.floor(this.width * x / this.canvas.clientWidth);
                 y = Math.floor(this.height * y / this.canvas.clientHeight);
-                if (tools[Tool.pen]) {
+                if (this.tools[this.tool.pen]) {
                     var p = new Point(x, y);
                     if (!p.equals(this.previous_point)) {
                         this.previous_point = p;
                         this.draw(p.x, p.y);
                     }
-                } else if (tools[Tool.eraser]) {
+                } else if (this.tools[this.tool.eraser]) {
                     this.erase(x, y);
                 }
                 this.publish();
@@ -48,13 +63,13 @@ class Canvas {
             var y = e.touches[0].clientY - rect.top;
             x = Math.floor(this.width * x / this.canvas.clientWidth);
             y = Math.floor(this.height * y / this.canvas.clientHeight);
-            if (tools[Tool.pen]) {
+            if (this.tools[this.tool.pen]) {
                 var p = new Point(x, y);
                 if (!p.equals(this.previous_point)) {
                     this.previous_point = p;
                     this.draw(p.x, p.y);
                 }
-            } else if (tools[Tool.eraser]) {
+            } else if (this.tools[this.tool.eraser]) {
                 this.erase(x, y);
             }
             this.publish();
@@ -76,42 +91,33 @@ class Canvas {
             let y = e.clientY - rect.top;
             x = Math.floor(this.width * x / this.canvas.clientWidth);
             y = Math.floor(this.height * y / this.canvas.clientHeight);
-            if (tools[Tool.fillBucket]) {
-                filler(x, y, this.data[x][y]);
-            } else if (tools[Tool.eraser]) {
+            if (this.tools[this.tool.fillBucket]) {
+                this.filler(x, y, this.data[x][y]);
+            } else if (this.tools[this.tool.eraser]) {
                 var temp = this.color;
                 var tga = this.ctx.globalAlpha;
                 this.setcolor([0, 0, 0, 255]);
                 this.draw(x, y);
                 this.setcolor(temp);
                 this.ctx.globalAlpha = tga;
-            } else if (tools[Tool.line]) {
-                lc.push(new Point(x, y));
-                if (lc.length === 2) {
-                    let lp = line(lc[0], lc[1]);
-                    lc = [];
-                    let p;
-                    for (p of lp) this.draw(p.x, p.y);
-                }
-            } else if (tools[Tool.circle]) {
-                let centre = new Point(x, y);
-                let radius = +prompt("radius?");
-                let lp = circle(radius, centre);
-                let p;
-                for (p of lp) this.draw(p.x, p.y);
-            } else if (tools[Tool.ellipse]) {
-                let center = new Point(x, y);
-                let radiusX = +prompt("X radius?");
-                let radiusY = +prompt("Y radius?");
-                let lp = ellipse(radiusX, radiusY, center);
-                for (p of lp)
-                    this.draw(p.x, p.y);
             } else {
                 this.previous_point = new Point(x, y);
                 this.draw(x, y);
             }
             this.publish();
         });
+    }
+
+    filler(x, y, cc) {
+        if (x >= 0 && x < board.width && y >= 0 && y < board.height) {
+            if (JSON.stringify(board.data[x][y]) === JSON.stringify(cc) && JSON.stringify(board.data[x][y]) !== JSON.stringify(board.color)) {
+                board.draw(x, y);
+                this.filler(x + 1, y, cc);
+                this.filler(x, y + 1, cc);
+                this.filler(x - 1, y, cc);
+                this.filler(x, y - 1, cc);
+            }
+        }
     }
 
     draw(x, y, count) {
@@ -166,10 +172,10 @@ class Canvas {
     }
 
     setmode(i) {
-        tools = [false, false, false, false, false, false];
-        tools[i] = true;
+        this.tools = [false, false, false, false, false, false];
+        this.tools[i] = true;
         document.querySelectorAll("#toolbar .item").forEach((x, i) => {
-            if (tools[i]) x.style.backgroundColor = "grey";
+            if (this.tools[i]) x.style.backgroundColor = "grey";
             else x.style.backgroundColor = "";
         })
     }
@@ -190,7 +196,7 @@ class Canvas {
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
         this.setcolor(this.color);
-        this.setmode(Tool.pen);
+        this.setmode(this.tool.pen);
         this.publish();
         this.updateFrame();
     }
