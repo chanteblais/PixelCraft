@@ -133,11 +133,11 @@ class Canvas {
 
         for (i = 1; i < this.width; i++) {
             for (j = 0; j < this.height; j++) {
-                this.setcolor(img[i - 1][j]);
+                this.setColor(img[i - 1][j]);
                 this.draw(i, j);
             }
         }
-        this.setcolor(color);
+        this.setColor(color);
     }
 
     shiftFrameLeftAndDuplicate() {
