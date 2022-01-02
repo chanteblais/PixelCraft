@@ -7,14 +7,9 @@ class Matrix {
     }
 
     async publishGIF() {
-        var payload = []
-        var i, j;
+        let payload = []
+        let i, j;
         window.board.framesManager.frames.forEach(frame => {
-            gif.addFrame(frame[0], {
-                copy: true,
-                delay: 100
-            });
-
             var img = frame[1]
             var gifFrame = []
             for (i = 0; i < this.width; i++) {

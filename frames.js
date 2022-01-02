@@ -77,8 +77,6 @@ class Frames {
         this.frames.splice(f, 1);
     }
 
-
-
     handleDragStart(e) {
         this.style.opacity = '0.4';
         window.dragSrcEl = this;
