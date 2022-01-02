@@ -131,15 +131,6 @@ body {
     box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
 }
 
-/*#main {*/
-/*    position: fixed;*/
-/*    left: 50%;*/
-/*    top: 50%;*/
-/*    width: 75%;*/
-/*    max-width: 550px;*/
-/*    transform: translate(-50%, -50%);*/
-/*}*/
-
 #main {
     position: fixed;
     top: 0;
@@ -147,37 +138,14 @@ body {
     height: 100%;
     width: 100%;
 
-    /* this is what centers your element in the fixed wrapper*/
     display: flex;
     flex-flow: column nowrap;
-    justify-content: center; /* aligns on vertical for column */
-    align-items: center; /* aligns on horizontal for column */
-
-    /* just for styling to see the limits */
-    /*border: 2px dashed red;*/
-    /*box-sizing: border-box;*/
+    justify-content: center;
+    align-items: center;
 }
 
-/*#canvas {*/
-/*    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);*/
-/*    !*position: fixed;*!*/
-/*    !*left: 50%;*!*/
-/*    !*top: 50%;*!*/
-/*    !*transform: translate(-50%, -50%);*!*/
-/*    width: 100%;*/
-/*    !*width: 75%;*!*/
-/*    !*max-width: 550px;*!*/
-/*    display: none;*/
-/*    cursor: crosshair;*/
-/*    touch-action: none;*/
-/*    image-rendering: -moz-crisp-edges;*/
-/*    image-rendering: -webkit-crisp-edges;*/
-/*    image-rendering: pixelated;*/
-/*    image-rendering: crisp-edges;*/
-/*}*/
-
 #canvas {
-    box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%);
+    box-shadow: 0px 0px 10px 0px rgba(0 0 0 50);
     display: none;
     width: 100%;
     /*margin: auto;*/
@@ -193,7 +161,7 @@ body {
 #toolbar {
     position: fixed;
     top: 50%;
-    left: 0%;
+    left: 0;
     transform: translateY(-50%);
     padding: 0px;
     color: white;
@@ -212,7 +180,7 @@ body {
     font-size: 24px;
 }
 
-#palette {
+#colors {
     position: fixed;
     top: 50%;
     right: 0%;
@@ -220,6 +188,10 @@ body {
     padding: 0px;
     color: white;
     max-width: 100px;
+}
+
+#palette {
+
 }
 
 #palette .item {
@@ -290,7 +262,14 @@ path {
         color: white;
     }
 
-    #palette {
+    #colors > input {
+        float: left;
+        width: 50px;
+        height: 50px;
+        margin: 5px 5px 0 5px;
+    }
+
+    #colors {
         position: fixed;
         top: 0%;
         transform: translateY(0%);
@@ -304,7 +283,7 @@ path {
         height: 20px;
     }
 
-    #palette .item {
+    #colors .item {
         padding: 15px;
     }
 
