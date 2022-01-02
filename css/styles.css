@@ -191,14 +191,29 @@ body {
 }
 
 #palette {
-
+    --checker-color-1: rgb(153,153,153);
+    --checker-color-2: #FFFFFF;
+    --checker-size: 5px;
+    --checker-gradient: linear-gradient(45deg, var(--checker-color-1) 25%, transparent 25%, transparent 75%, var(--checker-color-1) 75%);
 }
-
 #palette .item {
     display: inline-block;
     float: left;
-    padding: 25px;
+    padding: 24px;
     cursor: pointer;
+    border: 1px solid #545454;
+}
+
+#palette .item.selected {
+    border: 1px solid white;
+    box-shadow: inset 0 0 0px 1px;
+}
+
+#palette .item.empty {
+    background-color: var(--checker-color-2);
+    background-image: var(--checker-gradient), var(--checker-gradient);
+    background-position: 0 0, var(--checker-size) var(--checker-size);
+    background-size: calc(var(--checker-size) * 2) calc(var(--checker-size) * 2);
 }
 
 path {

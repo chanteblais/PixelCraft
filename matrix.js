@@ -31,5 +31,6 @@ class Matrix {
 window.onload = function () {
     let matrix = new Matrix();
     matrix.createProject(16, 16);
-    Palette.populate();
+    window.palette = new Palette();
+    window.palette.populate()
 }

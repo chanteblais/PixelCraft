@@ -30,7 +30,7 @@ class Canvas {
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
         this.steps = [];
-        this.setcolor([255, 255, 255, 255]);
+        this.setColor([255, 255, 255, 255]);
         this.framesManager = new Frames(this.canvas, this.data, this)
         this.framesManager.addFrame();
 
@@ -67,9 +67,9 @@ class Canvas {
             } else if (this.tools[this.tool.eraser]) {
                 var temp = this.color;
                 var tga = this.ctx.globalAlpha;
-                this.setcolor([0, 0, 0, 255]);
+                this.setColor([0, 0, 0, 255]);
                 this.draw(x, y);
-                this.setcolor(temp);
+                this.setColor(temp);
                 this.ctx.globalAlpha = tga;
             } else {
                 this.previous_point = new Point(x, y);
@@ -108,20 +108,20 @@ class Canvas {
         var i, j;
         for (i = 0; i < this.width; i++) {
             for (j = 0; j < this.height; j++) {
-                this.setcolor(img[i][j]);
+                this.setColor(img[i][j]);
                 this.draw(i, j);
             }
         }
-        this.setcolor(tmp_color);
+        this.setColor(tmp_color);
         this.ctx.globalAlpha = tmp_alpha;
     }
 
     erase(x, y) {
         let temp = this.color;
         let tga = this.ctx.globalAlpha;
-        this.setcolor([0, 0, 0, 255]);
+        this.setColor([0, 0, 0, 255]);
         this.draw(x, y);
-        this.setcolor(temp);
+        this.setColor(temp);
         this.ctx.globalAlpha = tga;
     }
 
@@ -181,7 +181,7 @@ class Canvas {
         })
     }
 
-    setcolor(color) {
+    setColor(color) {
         this.ctx.globalAlpha = 1;
         this.color = color;
         this.ctx.fillStyle = "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + color[3] + ")";
@@ -211,7 +211,7 @@ class Canvas {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
-        this.setcolor(this.color);
+        this.setColor(this.color);
         this.setmode(this.tool.pen);
         this.publish();
         this.framesManager.updateFrame();
@@ -247,7 +247,7 @@ class Canvas {
                                 if (k % 4 === 0) ctr++;
                             });
                             avg = avg.map(x => ~~(x / ctr));
-                            _this.setcolor(avg);
+                            _this.setColor(avg);
                             _this.draw(i, j);
                         }
                     }
