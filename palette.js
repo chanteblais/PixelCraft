@@ -9,11 +9,9 @@ class Palette {
         [0, 128, 0, 255],
         [0, 255, 0, 255],
         [255, 0, 0, 255],
-        [128, 0, 0, 255],
         [128, 0, 128, 255],
         [255, 0, 255, 255],
         [255, 255, 0, 255],
-        [192, 192, 192, 255],
         [128, 128, 128, 255]
     ]
     emptySwatchSlots = 5;
@@ -73,6 +71,9 @@ class Palette {
         } else {
             swatch.style.backgroundColor = ColourUtils.getCSSColourFromRGBArray(color);
             swatch.onclick = function () {
+                board.setColor(color);
+            };
+            swatch.ontouchstart = function () {
                 board.setColor(color);
             };
             swatch.oncontextmenu = function () {

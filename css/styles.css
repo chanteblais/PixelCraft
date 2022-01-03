@@ -13,43 +13,15 @@
 
 body {
     background-color: #232125;
-    margin: 0px;
+    margin: 0;
 }
-
-/*#popup, #frames {*/
-/*    background-color: #332f35;*/
-/*    color: white;*/
-/*    font-size: 20px;*/
-/*    padding: 30px;*/
-/*    !*box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);*!*/
-/*    !*position: fixed;*!*/
-/*    !*left: 50%;*!*/
-/*    !*top: 97%;*!*/
-/*    transform: translate(-50%, -50%) scale(0.1, 0.1);*/
-/*    text-align: center;*/
-/*    max-width: 420px;*/
-/*    !*width: 70%;*!*/
-/*    transition: 0.2s all;*/
-/*    z-index: 2;*/
-/*    border-radius: 5px;*/
-/*}*/
 
 #popup, #frames {
     background-color: #332f35;
     color: white;
     font-size: 20px;
-    /* padding: 30px; */
-    /* box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%); */
-    /* position: fixed; */
-    /* left: 50%; */
-    /* top: 97%; */
-    /* transform: translate(-50%, -50%) scale(0.1, 0.1); */
-    /* text-align: center; */
-     max-width: 420px;
-    /* width: 70%; */
-    /* transition: 0.2s all; */
+    max-width: 350px;
     z-index: 2;
-    /* border-radius: 5px; */
 }
 
 #popup {
@@ -61,17 +33,13 @@ body {
 }
 
 #frames {
-    /*transform: translate(-50%, -50%) scale(1, 1);*/
     padding: 5px;
     height: 100px;
     margin-top: 5px;
-    /*margin: auto;*/
 }
 
 #frames #gallery {
-    /*padding: 10px 10px 10px 10px;*/
     overflow-y: scroll;
-    /* overflow: hidden; */
     white-space: nowrap;
     scroll-behavior: smooth;
 }
@@ -82,15 +50,12 @@ body {
 
 #frames .btn {
     position: absolute;
-    /*background-color: rgba(255, 255, 255, 0.5);*/
     color: white;
     font-size: 20px;
     padding: 10px;
     top: 50%;
     transform: translateY(-50%);
-    /*border-radius: 50%;*/
     z-index: 2;
-    /*box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);*/
 }
 
 #frames img {
@@ -137,7 +102,6 @@ body {
     left: 0;
     height: 100%;
     width: 100%;
-
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
@@ -148,14 +112,12 @@ body {
     box-shadow: 0px 0px 10px 0px rgba(0 0 0 50);
     display: none;
     width: 100%;
-    /*margin: auto;*/
     max-width: 550px;
     cursor: crosshair;
     touch-action: none;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
-    image-rendering: crisp-edges;
 }
 
 #toolbar {
@@ -172,12 +134,13 @@ body {
     display: inline-block;
     float: left;
     padding: 15px;
-    border: 1px solid #FFF;
+    border: 1px solid #545454;
     cursor: pointer;
-    height: 32px;
-    width: 32px;
+    height: 30px;
+    width: 30px;
     font-family: Arial, FontAwesome;
-    font-size: 24px;
+    font-size: 30px;
+    text-align: center;
 }
 
 #colors {
@@ -191,11 +154,12 @@ body {
 }
 
 #palette {
-    --checker-color-1: rgb(153,153,153);
+    --checker-color-1: rgb(153, 153, 153);
     --checker-color-2: #FFFFFF;
     --checker-size: 5px;
     --checker-gradient: linear-gradient(45deg, var(--checker-color-1) 25%, transparent 25%, transparent 75%, var(--checker-color-1) 75%);
 }
+
 #palette .item {
     display: inline-block;
     float: left;
@@ -224,48 +188,6 @@ path {
     background-color: grey;
 }
 
-.menubtn {
-    position: fixed;
-    left: 20px;
-    top: 20px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-    background-color: #332f35;
-    color: white;
-    padding: 5px 15px 5px 15px;
-    border-radius: 5px;
-    font-size: 25px;
-    font-weight: bolder;
-    cursor: pointer;
-    z-index: 3;
-}
-
-.menu {
-    position: fixed;
-    top: 70px;
-    left: 20px;
-    border-radius: 5px;
-    padding: 0px;
-    color: white;
-    z-index: 3;
-    display: none;
-}
-
-.menu li {
-    padding: 5px 20px 5px 20px;
-    list-style: none;
-    background-color: #332f35;
-    cursor: pointer;
-}
-
-.menu li i {
-    padding-right: 10px;
-}
-
-.menu li a {
-    text-decoration: none;
-    color: white;
-}
-
 @media only screen and (max-width: 600px) {
     #toolbar {
         position: fixed;
@@ -286,27 +208,20 @@ path {
 
     #colors {
         position: fixed;
-        top: 0%;
+        top: 0;
         transform: translateY(0%);
         min-width: 100%;
-        padding: 0px;
+        padding: 0;
         color: white;
     }
 
     #toolbar .item {
-        width: 20px;
-        height: 20px;
+        width: 10px;
+        height: 10px;
+        font-size: 15px;
     }
 
     #colors .item {
         padding: 15px;
-    }
-
-    .menubtn {
-        top: 70px;
-    }
-
-    .menu {
-        top: 110px;
     }
 }

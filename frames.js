@@ -19,6 +19,11 @@ class Frames {
                 window.board.framesManager.currentFrame = i;
                 window.board.populate(this.frames[i][1]);
             };
+            x.ontouchstart = function () {
+                window.board.framesManager.setCurrentFrame(this)
+                window.board.framesManager.currentFrame = i;
+                window.board.populate(this.frames[i][1]);
+            };
             x.oncontextmenu = (e) => {
                 e.preventDefault();
                 let del_confirmation = confirm("Delete?");
@@ -42,6 +47,9 @@ class Frames {
         }
         this.frames.splice(this.currentFrame, 0, frame);
         this.canvasManager.populate(this.frames[this.currentFrame][1]);
+        // Scroll to the end
+        let gallery = document.querySelector("#gallery");
+        gallery.scrollTo(gallery.scrollWidth, 0)
     }
 
     getEmptyFrame() {
