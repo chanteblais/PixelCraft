@@ -164,8 +164,14 @@ class Frames {
             if (window.dragSrcEl === frame[0]) {
                 board.framesManager.deleteFrame(i)
                 if (currentFrameIndex === i) {
-                    this.setCurrentFrame(this.frames[i-1])
-                    board.framesManager.loadFrame(i-1);
+                    let index;
+                    if (currentFrameIndex === 0) {
+                        index = i + 1;
+                    } else {
+                        index = i - i
+                    }
+                    board.framesManager.setCurrentFrame("frames", board.framesManager.frames[index])
+                    board.framesManager.loadFrame(index);
                 }
                 break;
             }
