@@ -17,13 +17,13 @@ class Frames {
             let frame = this.frames[i];
             let imgElement = frame[0];
             imgElement.onclick = (e) => {
-                this.currentFrame = i;
+                console.log(frame)
+                this.setCurrentFrame(e.target)
                 this.canvasManager.populate(this.frames[i][1]);
             };
-            imgElement.ontouchstart = function () {
-                this.setCurrentFrame(this)
-                this.currentFrame = i;
-                this.this.canvasManager.populate(this.frames[i][1]);
+            imgElement.ontouchstart = (e) => {
+                this.setCurrentFrame(e.target)
+                this.canvasManager.populate(this.frames[i][1]);
             };
             imgElement.oncontextmenu = (e) => {
                 e.preventDefault();
@@ -41,6 +41,7 @@ class Frames {
     }
 
     setCurrentFrame(img) {
+        console.log("Setting current frame")
         let galleryItems = document.querySelectorAll("#frames #gallery img");
         for (let i = 0; i < galleryItems.length; i++) {
             let current = galleryItems[i] === img;
