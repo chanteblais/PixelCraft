@@ -128,7 +128,7 @@ class Canvas {
     shiftFrameRightAndDuplicate() {
         let color = this.color;
         this.framesManager.duplicateFrame();
-        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
+        let img = this.framesManager.frames[this.framesManager.getCurrentFrameIndex()][1];
         let i, j;
 
         for (i = 1; i < this.width; i++) {
@@ -143,7 +143,7 @@ class Canvas {
     shiftFrameLeftAndDuplicate() {
         let color = this.color;
         this.framesManager.duplicateFrame()
-        let img = this.framesManager.frames[this.framesManager.currentFrame][1];
+        let img = this.framesManager.frames[this.framesManager.getCurrentFrameIndex()][1];
         let i, j;
         for (i = 1; i < this.width - 1; i++) {
             for (j = 0; j < this.height; j++) {

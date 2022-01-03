@@ -16,13 +16,14 @@ class Frames {
         for (let i = 0; i < this.frames.length; i++){
             let frame = this.frames[i];
             let imgElement = frame[0];
-            imgElement.onclick = function () {
-                window.board.framesManager.setCurrentFrame(this)
+            imgElement.onclick = (e) => {
+                this.currentFrame = i;
+                this.canvasManager.populate(this.frames[i][1]);
             };
             imgElement.ontouchstart = function () {
-                window.board.framesManager.setCurrentFrame(this)
-                window.board.framesManager.currentFrame = i;
-                window.board.populate(this.frames[i][1]);
+                this.setCurrentFrame(this)
+                this.currentFrame = i;
+                this.this.canvasManager.populate(this.frames[i][1]);
             };
             imgElement.oncontextmenu = (e) => {
                 e.preventDefault();
