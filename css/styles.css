@@ -65,6 +65,15 @@ body {
     -webkit-touch-callout: none;
 }
 
+#trash {
+    position: absolute;
+    visibility: hidden;
+    top: 50%;
+    left: 50%;
+    color: white;
+    font-size: 50px;
+}
+
 #width,
 #height {
     background-color: #262327;

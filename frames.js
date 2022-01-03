@@ -1,89 +1,116 @@
 class Frames {
 
     constructor(canvas, data, canvasManager) {
-        this.currentFrame = 0;
         this.frames = [];
         this.canvas = canvas;
         this.data = data;
         this.canvasManager = canvasManager;
+        this.trash = document.querySelector("#trash");
+        this.trash.addEventListener('drop', this.trashDrop, false);
+        this.trash.addEventListener('dragover', this.handleDragOver, false);
     }
 
     load() {
-        document.querySelector("#frames #gallery").innerHTML = "";
-        for (let frame of this.frames) {
-            document.querySelector("#frames #gallery").appendChild(frame[0])
-        }
-        document.querySelectorAll("#frames #gallery img").forEach((x, i) => {
-            x.onclick = function () {
+        const gallery = document.querySelector("#frames #gallery");
+        gallery.innerHTML = "";
+        for (let i = 0; i < this.frames.length; i++){
+            let frame = this.frames[i];
+            let imgElement = frame[0];
+            imgElement.onclick = function () {
+                window.board.framesManager.setCurrentFrame(this)
+            };
+            imgElement.ontouchstart = function () {
                 window.board.framesManager.setCurrentFrame(this)
                 window.board.framesManager.currentFrame = i;
                 window.board.populate(this.frames[i][1]);
             };
-            x.ontouchstart = function () {
-                window.board.framesManager.setCurrentFrame(this)
-                window.board.framesManager.currentFrame = i;
-                window.board.populate(this.frames[i][1]);
-            };
-            x.oncontextmenu = (e) => {
+            imgElement.oncontextmenu = (e) => {
                 e.preventDefault();
                 let del_confirmation = confirm("Delete?");
                 if (del_confirmation) {
                     this.deleteFrame(i);
-                    // Frames.load();
                 }
             };
-        });
+            gallery.appendChild(imgElement)
+        }
+    }
+
+    loadFrame(f) {
+        this.canvasManager.populate(this.frames[f][1])
     }
 
     setCurrentFrame(img) {
-        document.querySelectorAll("#frames #gallery img").forEach(i => i.setAttribute("current", false));
-        img.setAttribute("current", true);
+        let galleryItems = document.querySelectorAll("#frames #gallery img");
+        for (let i = 0; i < galleryItems.length; i++) {
+            let current = galleryItems[i] === img;
+            galleryItems[i].setAttribute("current", current.toString());
+            if (current){
+                // window.board.framesManager.currentFrame = i;
+                this.canvasManager.populate(this.frames[i][1]);
+            }
+        }
+    }
+
+    getCurrentFrameIndex() {
+        let frames = document.querySelectorAll(("#frames #gallery img"));
+        for (let i = 0; i < frames.length; i++) {
+            if (frames[i].getAttribute("current") === "true") {
+                return i;
+            }
+        }
+        return 0;
     }
 
     addFrame() {
         const frame = this.getEmptyFrame();
-        if (this.frames.length > 0) {
-            this.currentFrame++;
+        let currentFrameIndex = this.getCurrentFrameIndex();
+        if (this.frames.length !== 0) {
+            currentFrameIndex += 1;
         }
-        this.frames.splice(this.currentFrame, 0, frame);
-        this.canvasManager.populate(this.frames[this.currentFrame][1]);
+        this.frames.splice(currentFrameIndex, 0, frame);
+        this.load();
+        this.setCurrentFrame(frame[0])
+        this.canvasManager.populate(this.frames[this.getCurrentFrameIndex()][1]);
         // Scroll to the end
         let gallery = document.querySelector("#gallery");
         gallery.scrollTo(gallery.scrollWidth, 0)
     }
 
     getEmptyFrame() {
-        if (this.blankFrame) {
-            return this.blankFrame
-        } else {
-            let frame = this.getCanvasImage();
-            this.blankFrame = frame;
-            return frame
+        let img = this.createThumbnail();
+        if (!this.blankFrame) {
+            this.blankFrame = this.getCanvasImage();
         }
+        img.src = this.blankFrame[0].src;
+        return [img, this.blankFrame[1]];
     }
 
     getCanvasImage() {
-        let img = new Image();
+        let img = this.createThumbnail();
         img.src = this.canvas.toDataURL();
+        return [img, this.data.map(inner => inner.slice())];
+    }
+
+    createThumbnail(){
+        let img = new Image();
         img.draggable = true;
         img.addEventListener('dragstart', this.handleDragStart, false);
         img.addEventListener('dragover', this.handleDragOver, false);
         img.addEventListener('drop', this.handleDrop, false);
         img.addEventListener('dragend', this.handleDragEnd, false);
-        return [img, this.data.map(inner => inner.slice())];
+        return img;
     }
 
     duplicateFrame() {
         const frame = this.getCanvasImage();
-        if (this.frames.length > 0) {
-            this.currentFrame++;
-        }
-        this.frames.splice(this.currentFrame, 0, frame);
+        this.frames.splice(this.getCurrentFrameIndex(), 0, frame);
         this.load();
     }
 
     updateFrame() {
-        this.frames[this.currentFrame] = this.getCanvasImage();
+        let updatedImage = this.getCanvasImage();
+        this.frames[this.getCurrentFrameIndex()][0].src = updatedImage[0].src;
+        this.frames[this.getCurrentFrameIndex()][1] = updatedImage[1];
         this.load();
     }
 
@@ -93,6 +120,7 @@ class Frames {
 
     handleDragStart(e) {
         this.style.opacity = '0.4';
+        board.framesManager.trash.style.visibility = "visible";
         window.dragSrcEl = this;
 
         e.dataTransfer.effectAllowed = 'move';
@@ -121,8 +149,34 @@ class Frames {
         return false;
     }
 
+    trashDrop(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        let framesLength = board.framesManager.frames.length;
+        if (framesLength === 1) {
+            board.clear()
+            return false
+        }
+        let currentFrameIndex = board.framesManager.getCurrentFrameIndex()
+        for (let i = 0; i < board.framesManager.frames.length; i++){
+            const frame = board.framesManager.frames[i];
+            if (window.dragSrcEl === frame[0]) {
+                board.framesManager.deleteFrame(i)
+                if (currentFrameIndex === i) {
+                    this.setCurrentFrame(this.frames[i-1])
+                    board.framesManager.loadFrame(i-1);
+                }
+                break;
+            }
+        }
+        board.framesManager.load();
+    }
+
+
     handleDragEnd(e) {
         this.style.opacity = '1';
+        document.querySelector("#trash").style.visibility = "hidden";
     }
 
     static close() {
