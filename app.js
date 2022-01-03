@@ -17,7 +17,7 @@ class App {
             let gifFrame = []
             for (i = 0; i < this.canvas.width; i++) {
                 for (j = 0; j < this.canvas.height; j++) {
-                    var hex_value = this.canvas.rgbToHex(img[j][i][0], img[j][i][1], img[j][i][2])
+                    var hex_value = ColourUtils.rgbToHex(img[j][i][0], img[j][i][1], img[j][i][2])
                     gifFrame.push(hex_value)
                 }
             }
