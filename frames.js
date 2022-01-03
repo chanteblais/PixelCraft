@@ -14,9 +14,10 @@ class Frames {
             document.querySelector("#frames #gallery").appendChild(frame[0])
         }
         document.querySelectorAll("#frames #gallery img").forEach((x, i) => {
-            x.onclick = (e) => {
-                this.currentFrame = i;
-                this.canvasManager.populate(this.frames[i][1]);
+            x.onclick = function () {
+                window.board.framesManager.setCurrentFrame(this)
+                window.board.framesManager.currentFrame = i;
+                window.board.populate(this.frames[i][1]);
             };
             x.oncontextmenu = (e) => {
                 e.preventDefault();
@@ -27,6 +28,11 @@ class Frames {
                 }
             };
         });
+    }
+
+    setCurrentFrame(img) {
+        document.querySelectorAll("#frames #gallery img").forEach(i => i.setAttribute("current", false));
+        img.setAttribute("current", true);
     }
 
     addFrame() {

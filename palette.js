@@ -65,21 +65,21 @@ class Palette {
         board.setColor(ColourUtils.hexToRgba(hex))
     }
 
-    createColorSwatch(color, transparent) {
+    createColorSwatch(color, emptySlot) {
         let swatch = document.createElement('span');
         swatch.classList.add("item");
-        if (transparent) {
+        if (emptySlot) {
             swatch.classList.add("empty");
         } else {
             swatch.style.backgroundColor = ColourUtils.getCSSColourFromRGBArray(color);
+            swatch.onclick = function () {
+                board.setColor(color);
+            };
+            swatch.oncontextmenu = function () {
+                board.setColor(color);
+                board.ctx.globalAlpha = prompt('Transparency(0-1)?');
+            };
         }
-        swatch.onclick = function () {
-            board.setColor(color);
-        };
-        swatch.oncontextmenu = function () {
-            board.setColor(color);
-            board.ctx.globalAlpha = prompt('Transparency(0-1)?');
-        };
         return swatch;
     }
 
@@ -87,10 +87,12 @@ class Palette {
         document.querySelectorAll("#palette .item")
             .forEach(swatch => {
                 let swatchColour = ColourUtils.getRGBArrayFromCSSColour(swatch.style.backgroundColor);
-                if (swatchColour && swatchColour.toString() !== colorArray.toString()) {
-                    swatch.classList.remove("selected")
-                } else {
-                    swatch.classList.add("selected")
+                if (swatchColour) {
+                    if (swatchColour.toString() !== colorArray.toString()) {
+                        swatch.classList.remove("selected")
+                    } else {
+                        swatch.classList.add("selected")
+                    }
                 }
             });
     }
