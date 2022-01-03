@@ -17,7 +17,6 @@ class Frames {
             let frame = this.frames[i];
             let imgElement = frame[0];
             imgElement.onclick = (e) => {
-                console.log(frame)
                 this.setCurrentFrame(e.target)
                 this.canvasManager.populate(this.frames[i][1]);
             };
@@ -41,7 +40,6 @@ class Frames {
     }
 
     setCurrentFrame(img) {
-        console.log("Setting current frame")
         let galleryItems = document.querySelectorAll("#frames #gallery img");
         for (let i = 0; i < galleryItems.length; i++) {
             let current = galleryItems[i] === img;
