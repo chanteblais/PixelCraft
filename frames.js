@@ -4,24 +4,24 @@ class Frames {
         this.frames = [];
         this.canvasManager = canvasManager;
         this.trash = document.querySelector("#trash");
-        this.trash.addEventListener('drop', this.handleTrashDrop, false);
-        this.trash.addEventListener('dragover', this.handleDragOver, false);
-        this.trash.addEventListener('dragleave', this.handleDragLeave, false);
-        this.trash.addEventListener('dragend', this.handleDragEnd, false);
+        this.trash.addEventListener("drop", this.handleTrashDrop, false);
+        this.trash.addEventListener("dragover", this.handleDragOver, false);
+        this.trash.addEventListener("dragleave", this.handleDragLeave, false);
+        this.trash.addEventListener("dragend", this.handleDragEnd, false);
     }
 
     load() {
         const gallery = document.querySelector("#frames #gallery");
         gallery.innerHTML = "";
-        for (let i = 0; i < this.frames.length; i++){
+        for (let i = 0; i < this.frames.length; i++) {
             let frame = this.frames[i];
             let imgElement = frame[0];
             imgElement.onclick = (e) => {
-                this.setCurrentFrame(e.target)
+                this.setCurrentFrame(e.target);
                 this.canvasManager.populate(this.frames[i][1]);
             };
             imgElement.ontouchstart = (e) => {
-                this.setCurrentFrame(e.target)
+                this.setCurrentFrame(e.target);
                 this.canvasManager.populate(this.frames[i][1]);
             };
             imgElement.oncontextmenu = (e) => {
@@ -31,12 +31,13 @@ class Frames {
                     this.deleteFrame(i);
                 }
             };
-            gallery.appendChild(imgElement)
+            gallery.appendChild(imgElement);
         }
+        this.ensureCurrentFrameIsVisible();
     }
 
     loadFrame(f) {
-        this.canvasManager.populate(this.frames[f][1])
+        this.canvasManager.populate(this.frames[f][1]);
     }
 
     setCurrentFrame(img) {
@@ -44,13 +45,22 @@ class Frames {
         for (let i = 0; i < galleryItems.length; i++) {
             let current = galleryItems[i] === img;
             galleryItems[i].setAttribute("current", current.toString());
-            if (current){
+            let frameImg = this.frames[i][0];
+            if (current) {
                 this.canvasManager.populate(this.frames[i][1]);
-                this.addBorder(this.frames[i][0])
+                this.addBorder(frameImg);
             } else {
-                this.removeBorder(this.frames[i][0])
+                this.removeBorder(frameImg);
             }
         }
+    }
+
+    ensureCurrentFrameIsVisible() {
+        document.querySelectorAll("#frames #gallery img").forEach(img => {
+            if (img.getAttribute("current") === "true") {
+                img.scrollIntoView();
+            }
+        });
     }
 
     addBorder(img) {
@@ -81,11 +91,8 @@ class Frames {
         }
         this.frames.splice(currentFrameIndex, 0, frame);
         this.load();
-        this.setCurrentFrame(frame[0])
+        this.setCurrentFrame(frame[0]);
         // this.canvasManager.populate(frame[1]);
-        // Scroll to the end
-        let gallery = document.querySelector("#gallery");
-        gallery.scrollTo(gallery.scrollWidth, 0)
     }
 
     getEmptyFrame() {
@@ -100,13 +107,13 @@ class Frames {
         return [img, this.canvasManager.data.map(inner => inner.slice())];
     }
 
-    createThumbnail(){
+    createThumbnail() {
         let img = new Image();
         img.draggable = true;
-        img.addEventListener('dragstart', this.handleDragStart, false);
-        img.addEventListener('dragover', this.handleDragOver, false);
-        img.addEventListener('drop', this.handleDrop, false);
-        img.addEventListener('dragend', this.handleDragEnd, false);
+        img.addEventListener("dragstart", this.handleDragStart, false);
+        img.addEventListener("dragover", this.handleDragOver, false);
+        img.addEventListener("drop", this.handleDrop, false);
+        img.addEventListener("dragend", this.handleDragEnd, false);
         return img;
     }
 
@@ -128,13 +135,13 @@ class Frames {
     }
 
     handleDragStart(e) {
-        this.style.opacity = '0.4';
-        document.querySelector("#canvas").style.opacity = "0.4"
+        this.style.opacity = "0.4";
+        document.querySelector("#canvas").style.opacity = "0.4";
         board.framesManager.trash.style.visibility = "visible";
         window.dragSrcEl = this;
 
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', this.src);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", this.src);
         return false;
     }
 
@@ -143,13 +150,13 @@ class Frames {
             e.preventDefault();
         }
 
-        let trash = document.querySelector("#trash")
+        let trash = document.querySelector("#trash");
         if (this === trash) {
             let icon = document.querySelector("#trash > span > i");
             icon.classList.remove("fa-trash");
             icon.classList.add("fa-trash-restore");
         }
-        e.dataTransfer.dropEffect = 'move';
+        e.dataTransfer.dropEffect = "move";
 
         return false;
     }
@@ -168,7 +175,7 @@ class Frames {
             e.preventDefault();
         }
 
-        let galleryItems = document.querySelectorAll("#frames #gallery img")
+        let galleryItems = document.querySelectorAll("#frames #gallery img");
         let draggedIndex;
         let draggedItem;
         let droppedIndex;
@@ -176,11 +183,11 @@ class Frames {
             if (this === galleryItems[i]) {
                 droppedIndex = i;
             }
-            if (window.dragSrcEl === galleryItems[i]){
+            if (window.dragSrcEl === galleryItems[i]) {
                 draggedIndex = i;
                 draggedItem = board.framesManager.frames[i];
             }
-            if (droppedIndex && draggedIndex){
+            if (droppedIndex && draggedIndex) {
                 break;
             }
         }
@@ -199,11 +206,11 @@ class Frames {
 
         let framesLength = board.framesManager.frames.length;
         if (framesLength === 1) {
-            board.clear()
-            return false
+            board.clear();
+            return false;
         }
-        let currentFrameIndex = board.framesManager.getCurrentFrameIndex()
-        for (let i = 0; i < board.framesManager.frames.length; i++){
+        let currentFrameIndex = board.framesManager.getCurrentFrameIndex();
+        for (let i = 0; i < board.framesManager.frames.length; i++) {
             const frame = board.framesManager.frames[i];
             if (window.dragSrcEl === frame[0]) {
                 if (currentFrameIndex === i) {
@@ -213,23 +220,22 @@ class Frames {
                     } else {
                         index = i - 1;
                     }
-                    board.framesManager.setCurrentFrame(board.framesManager.frames[index][0])
+                    board.framesManager.setCurrentFrame(board.framesManager.frames[index][0]);
                 }
-                board.framesManager.deleteFrame(i)
+                board.framesManager.deleteFrame(i);
                 break;
             }
         }
         board.framesManager.load();
     }
 
-
     handleDragEnd(e) {
-        this.style.opacity = '1';
-        document.querySelector("#canvas").style.opacity = "1"
+        this.style.opacity = "1";
+        document.querySelector("#canvas").style.opacity = "1";
         document.querySelector("#trash").style.visibility = "hidden";
-        let trashIcon = document.querySelector("#trash").childNodes[1]
+        let trashIcon = document.querySelector("#trash").childNodes[1];
         trashIcon.innerHTML = "";
-        trashIcon.innerHTML = '<i class="fas fa-trash"></i>';
+        trashIcon.innerHTML = "<i class=\"fas fa-trash\"></i>";
     }
 
     static close() {
