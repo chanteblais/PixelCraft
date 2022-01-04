@@ -4,8 +4,10 @@ class Frames {
         this.frames = [];
         this.canvasManager = canvasManager;
         this.trash = document.querySelector("#trash");
-        this.trash.addEventListener('drop', this.trashDrop, false);
+        this.trash.addEventListener('drop', this.handleTrashDrop, false);
         this.trash.addEventListener('dragover', this.handleDragOver, false);
+        this.trash.addEventListener('dragleave', this.handleDragLeave, false);
+        this.trash.addEventListener('dragend', this.handleDragEnd, false);
     }
 
     load() {
@@ -130,6 +132,7 @@ class Frames {
 
     handleDragStart(e) {
         this.style.opacity = '0.4';
+        document.querySelector("#canvas").style.opacity = "0.4"
         board.framesManager.trash.style.visibility = "visible";
         window.dragSrcEl = this;
 
@@ -143,9 +146,24 @@ class Frames {
             e.preventDefault();
         }
 
+        let trash = document.querySelector("#trash")
+        if (this === trash) {
+            let icon = document.querySelector("#trash > span > i");
+            icon.classList.remove("fa-trash");
+            icon.classList.add("fa-trash-restore");
+        }
         e.dataTransfer.dropEffect = 'move';
 
         return false;
+    }
+
+    handleDragLeave(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+        let icon = document.querySelector("#trash > span > i");
+        icon.classList.add("fa-trash");
+        icon.classList.remove("fa-trash-restore");
     }
 
     handleDrop(e) {
@@ -177,10 +195,11 @@ class Frames {
         return false;
     }
 
-    trashDrop(e) {
+    handleTrashDrop(e) {
         if (e.preventDefault) {
             e.preventDefault();
         }
+
         let framesLength = board.framesManager.frames.length;
         if (framesLength === 1) {
             board.clear()
@@ -209,7 +228,11 @@ class Frames {
 
     handleDragEnd(e) {
         this.style.opacity = '1';
+        document.querySelector("#canvas").style.opacity = "1"
         document.querySelector("#trash").style.visibility = "hidden";
+        let trashIcon = document.querySelector("#trash").childNodes[1]
+        trashIcon.innerHTML = "";
+        trashIcon.innerHTML = '<i class="fas fa-trash"></i>';
     }
 
     static close() {
