@@ -155,20 +155,6 @@ class Canvas {
         this.setColor(color);
     }
 
-    shiftFrameUpAndDuplicate() {
-        let color = this.color;
-        this.framesManager.duplicateFrame()
-        let img = this.framesManager.frames[this.framesManager.getCurrentFrameIndex()][1];
-        let i, j;
-        for (i = 1; i < this.width - 1; i++) {
-            for (j = 0; j < this.height; j++) {
-                this.setColor(img[i + 1][j]);
-                this.draw(i, j);
-            }
-        }
-        this.setColor(color);
-    }
-
     getColor(x, y) {
         const p = document.querySelector("#canvas").getContext('2d').getImageData(Math.floor(x * (window.board.w / window.board.width)), Math.floor(y * (window.board.h / window.board.height)), Math.floor(window.board.w / window.board.width), Math.floor(window.board.h / window.board.height)).data;
         return ColourUtils.rgbToHex(p[0], p[1], p[2]);

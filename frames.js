@@ -90,9 +90,6 @@ class Frames {
 
     getEmptyFrame() {
         let img = this.createThumbnail();
-        // if (!this.blankFrame) {
-        //     this.blankFrame = this.getCanvasImage();
-        // }
         img.src = this.canvasManager.emptySrc;
         return [img, [...Array(this.canvasManager.width)].map(e => Array(this.canvasManager.height).fill([0, 0, 0, 255]))];
     }
