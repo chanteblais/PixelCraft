@@ -25,13 +25,14 @@ class Canvas {
         this.w = +this.canvas.width;
         this.h = +this.canvas.height;
         this.ctx = this.canvas.getContext("2d");
-        this.ctx.fillStyle = "white";
+        this.ctx.fillStyle = "black";
         this.ctx.globalAlpha = 1;
         this.ctx.fillRect(0, 0, this.w, this.h);
         this.data = [...Array(this.width)].map(e => Array(this.height).fill([0, 0, 0, 255]));
+        this.emptySrc = this.canvas.toDataURL()
         this.steps = [];
         this.setColor([255, 255, 255, 255]);
-        this.framesManager = new Frames(this.canvas, this.data, this)
+        this.framesManager = new Frames(this);
         this.framesManager.addFrame();
 
         this.previous_point = new Point(undefined, undefined)
@@ -101,14 +102,14 @@ class Canvas {
         }
     }
 
-    populate(img) {
-        var tmp_color = this.color;
-        var tmp_alpha = this.ctx.globalAlpha;
+    populate(data) {
+        let tmp_color = this.color;
+        let tmp_alpha = this.ctx.globalAlpha;
         this.ctx.globalAlpha = 1;
-        var i, j;
+        let i, j;
         for (i = 0; i < this.width; i++) {
             for (j = 0; j < this.height; j++) {
-                this.setColor(img[i][j]);
+                this.setColor(data[i][j]);
                 this.draw(i, j);
             }
         }

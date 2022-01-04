@@ -1,9 +1,7 @@
 class Frames {
 
-    constructor(canvas, data, canvasManager) {
+    constructor(canvasManager) {
         this.frames = [];
-        this.canvas = canvas;
-        this.data = data;
         this.canvasManager = canvasManager;
         this.trash = document.querySelector("#trash");
         this.trash.addEventListener('drop', this.trashDrop, false);
@@ -45,10 +43,22 @@ class Frames {
             let current = galleryItems[i] === img;
             galleryItems[i].setAttribute("current", current.toString());
             if (current){
-                // window.board.framesManager.currentFrame = i;
                 this.canvasManager.populate(this.frames[i][1]);
+                this.addBorder(this.frames[i][0])
+            } else {
+                this.removeBorder(this.frames[i][0])
             }
         }
+    }
+
+    addBorder(img) {
+        img.style.borderStyle = "solid";
+        img.style.borderColor = "red";
+    }
+
+    removeBorder(img) {
+        img.style.borderStyle = null;
+        img.style.borderColor = null;
     }
 
     getCurrentFrameIndex() {
@@ -70,7 +80,7 @@ class Frames {
         this.frames.splice(currentFrameIndex, 0, frame);
         this.load();
         this.setCurrentFrame(frame[0])
-        this.canvasManager.populate(this.frames[this.getCurrentFrameIndex()][1]);
+        // this.canvasManager.populate(frame[1]);
         // Scroll to the end
         let gallery = document.querySelector("#gallery");
         gallery.scrollTo(gallery.scrollWidth, 0)
@@ -78,17 +88,17 @@ class Frames {
 
     getEmptyFrame() {
         let img = this.createThumbnail();
-        if (!this.blankFrame) {
-            this.blankFrame = this.getCanvasImage();
-        }
-        img.src = this.blankFrame[0].src;
-        return [img, this.blankFrame[1]];
+        // if (!this.blankFrame) {
+        //     this.blankFrame = this.getCanvasImage();
+        // }
+        img.src = this.canvasManager.emptySrc;
+        return [img, [...Array(this.canvasManager.width)].map(e => Array(this.canvasManager.height).fill([0, 0, 0, 255]))];
     }
 
     getCanvasImage() {
         let img = this.createThumbnail();
-        img.src = this.canvas.toDataURL();
-        return [img, this.data.map(inner => inner.slice())];
+        img.src = this.canvasManager.canvas.toDataURL();
+        return [img, this.canvasManager.data.map(inner => inner.slice())];
     }
 
     createThumbnail(){
@@ -142,10 +152,28 @@ class Frames {
         if (e.preventDefault) {
             e.preventDefault();
         }
-        if (window.dragSrcEl !== this) {
-            window.dragSrcEl.src = this.src;
-            this.src = e.dataTransfer.getData('text/plain');
+
+        let galleryItems = document.querySelectorAll("#frames #gallery img")
+        let draggedIndex;
+        let draggedItem;
+        let droppedIndex;
+        for (let i = 0; i < galleryItems.length; i++) {
+            if (this === galleryItems[i]) {
+                droppedIndex = i;
+            }
+            if (window.dragSrcEl === galleryItems[i]){
+                draggedIndex = i;
+                draggedItem = board.framesManager.frames[i];
+            }
+            if (droppedIndex && draggedIndex){
+                break;
+            }
         }
+
+        board.framesManager.frames.splice(draggedIndex, 1);
+        board.framesManager.frames.splice(droppedIndex, 0, draggedItem);
+        board.framesManager.load();
+
         return false;
     }
 
@@ -162,17 +190,16 @@ class Frames {
         for (let i = 0; i < board.framesManager.frames.length; i++){
             const frame = board.framesManager.frames[i];
             if (window.dragSrcEl === frame[0]) {
-                board.framesManager.deleteFrame(i)
                 if (currentFrameIndex === i) {
                     let index;
                     if (currentFrameIndex === 0) {
                         index = i + 1;
                     } else {
-                        index = i - i
+                        index = i - 1;
                     }
-                    board.framesManager.setCurrentFrame("frames", board.framesManager.frames[index])
-                    board.framesManager.loadFrame(index);
+                    board.framesManager.setCurrentFrame(board.framesManager.frames[index][0])
                 }
+                board.framesManager.deleteFrame(i)
                 break;
             }
         }
